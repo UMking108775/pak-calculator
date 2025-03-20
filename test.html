@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pakistani Style Calculator</title>
+    <style>
+        @font-face {
+            font-family: 'DigitalFont';
+            src: url('https://cdnjs.cloudflare.com/ajax/libs/dsdigital/1.0/DS-DIGI.TTF');
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #055640, #046941);
+            font-family: Arial, sans-serif;
+        }
+
+        .calculator {
+            background-color: #0f0f0f;
+            background-image: radial-gradient(circle at top right, #1a1a1a, #0a0a0a);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 
+                        inset 0 1px 1px rgba(255, 255, 255, 0.1),
+                        inset 0 -1px 1px rgba(0, 0, 0, 0.5);
+            width: 320px;
+            border: 2px solid #046941;
+            position: relative;
+        }
+
+        .brand {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .logo {
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            text-shadow: 0 0 5px #1a8856;
+        }
+
+        .model {
+            color: #9e9e9e;
+            font-size: 12px;
+            align-self: flex-end;
+        }
+
+        .display {
+            background-color: #dae8d6;
+            border: 3px solid #046941;
+            border-radius: 5px;
+            height: 80px;
+            margin-bottom: 20px;
+            text-align: right;
+            padding: 10px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+            background-image: repeating-linear-gradient(
+                transparent, 
+                transparent 19px, 
+                rgba(0, 0, 0, 0.05) 20px
+            );
+        }
+
+        .calculation {
+            color: #555;
+            font-size: 16px;
+            height: 20px;
+            font-family: 'DigitalFont', monospace;
+            margin-bottom: 5px;
+        }
+
+        .result {
+            color: #000;
+            font-size: 40px;
+            font-family: 'DigitalFont', monospace;
+            font-weight: bold;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 15px;
+        }
+
+        .button {
+            background: linear-gradient(145deg, #222, #333);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 24px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #000, 0 5px 5px rgba(0, 0, 0, 0.3);
+            position: relative;
+            user-select: none;
+            transition: transform 0.1s, box-shadow 0.1s;
+            overflow: hidden;
+        }
+        
+        .button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(45deg);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .button:hover::after {
+            opacity: 1;
+        }
+
+        .button:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #000, 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .button.operator {
+            background: linear-gradient(145deg, #046941, #055640);
+            color: white;
+        }
+
+        .button.equals {
+            background: linear-gradient(145deg, #b30f0f, #d41212);
+            color: white;
+        }
+
+        .button.clear {
+            background: linear-gradient(145deg, #8b0000, #a50000);
+            color: white;
+        }
+
+        .urdu-label {
+            font-size: 10px;
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .solar-panel {
+            height: 10px;
+            background: linear-gradient(to right, #222, #555, #222);
+            border-radius: 2px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .solar-cell {
+            height: 100%;
+            width: 20%;
+            background: linear-gradient(to bottom, #222, #000);
+            border-right: 1px solid #333;
+        }
+
+        .made-in-pakistan {
+            text-align: center;
+            color: #9e9e9e;
+            font-size: 11px;
+            margin-top: 15px;
+            font-weight: bold;
+            text-shadow: 0 0 2px rgba(255, 255, 255, 0.2);
+            background: linear-gradient(to right, #046941, #01411c, #046941);
+            border-radius: 8px;
+            padding: 4px;
+            letter-spacing: 1px;
+        }
+
+        .ssa-logo {
+            position: absolute;
+            bottom: 50px;
+            right: 15px;
+            font-size: 8px;
+            color: rgba(255, 255, 255, 0.4);
+            font-style: italic;
+            transform: rotate(-90deg);
+            transform-origin: right bottom;
+        }
+
+        .hologram {
+            position: absolute;
+            bottom: 20px;
+            left: 15px;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            border-radius: 50%;
+            animation: hologram-effect 3s infinite linear;
+        }
+
+        @keyframes hologram-effect {
+            0% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+            100% { background-position: 0% 0%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="brand">
+            <div class="logo">SSA Technology</div>
+            <div class="model">PK-970MS</div>
+        </div>
+        <div class="solar-panel">
+            <div class="solar-cell"></div>
+            <div class="solar-cell"></div>
+            <div class="solar-cell"></div>
+            <div class="solar-cell"></div>
+            <div class="solar-cell"></div>
+        </div>
+        <div class="display">
+            <div class="calculation" id="calculation"></div>
+            <div class="result" id="result">0</div>
+        </div>
+        <div class="buttons">
+            <div class="button clear" onclick="clearDisplay()">C
+                <span class="urdu-label">صاف</span>
+            </div>
+            <div class="button operator" onclick="appendOperator('/')">/
+                <span class="urdu-label">تقسیم</span>
+            </div>
+            <div class="button operator" onclick="appendOperator('*')">×
+                <span class="urdu-label">ضرب</span>
+            </div>
+            <div class="button operator" onclick="backspace()">⌫
+                <span class="urdu-label">پیچھے</span>
+            </div>
+
+            <div class="button" onclick="appendNumber(7)">7
+                <span class="urdu-label">٧</span>
+            </div>
+            <div class="button" onclick="appendNumber(8)">8
+                <span class="urdu-label">٨</span>
+            </div>
+            <div class="button" onclick="appendNumber(9)">9
+                <span class="urdu-label">٩</span>
+            </div>
+            <div class="button operator" onclick="appendOperator('-')">-
+                <span class="urdu-label">منفی</span>
+            </div>
+
+            <div class="button" onclick="appendNumber(4)">4
+                <span class="urdu-label">٤</span>
+            </div>
+            <div class="button" onclick="appendNumber(5)">5
+                <span class="urdu-label">٥</span>
+            </div>
+            <div class="button" onclick="appendNumber(6)">6
+                <span class="urdu-label">٦</span>
+            </div>
+            <div class="button operator" onclick="appendOperator('+')">+
+                <span class="urdu-label">جمع</span>
+            </div>
+
+            <div class="button" onclick="appendNumber(1)">1
+                <span class="urdu-label">١</span>
+            </div>
+            <div class="button" onclick="appendNumber(2)">2
+                <span class="urdu-label">٢</span>
+            </div>
+            <div class="button" onclick="appendNumber(3)">3
+                <span class="urdu-label">٣</span>
+            </div>
+            <div class="button equals" onclick="calculate()" id="equals">=
+                <span class="urdu-label">مساوی</span>
+            </div>
+
+            <div class="button" onclick="appendNumber(0)" style="grid-column: span 2;">0
+                <span class="urdu-label">٠</span>
+            </div>
+            <div class="button" onclick="appendDecimal()">.</div>
+            <div class="button operator" onclick="toggleSign()">+/-</div>
+        </div>
+        <div class="made-in-pakistan">
+            Made in Pakistan 🇵🇰
+        </div>
+        <div class="ssa-logo">SSA TECH © 2025</div>
+        <div class="hologram"></div>
+    </div>
+
+    <script>
+        let calculation = '';
+        let currentResult = '0';
+        let lastOperation = '';
+        let calculationElement = document.getElementById('calculation');
+        let resultElement = document.getElementById('result');
+        let calculationComplete = false;
+
+        function updateDisplay() {
+            calculationElement.textContent = calculation;
+            resultElement.textContent = currentResult;
+        }
+
+        function appendNumber(number) {
+            if (calculationComplete) {
+                clearDisplay();
+                calculationComplete = false;
+            }
+            
+            if (currentResult === '0') {
+                currentResult = number.toString();
+            } else {
+                currentResult += number.toString();
+            }
+            updateDisplay();
+        }
+
+        function appendDecimal() {
+            if (calculationComplete) {
+                clearDisplay();
+                calculationComplete = false;
+            }
+            
+            if (!currentResult.includes('.')) {
+                currentResult += '.';
+            }
+            updateDisplay();
+        }
+
+        function appendOperator(operator) {
+            if (calculationComplete) {
+                calculation = currentResult;
+                calculationComplete = false;
+            } else {
+                calculation += currentResult;
+            }
+            
+            calculation += ' ' + operator + ' ';
+            currentResult = '0';
+            lastOperation = operator;
+            updateDisplay();
+        }
+
+        function toggleSign() {
+            if (currentResult !== '0') {
+                if (currentResult.startsWith('-')) {
+                    currentResult = currentResult.substring(1);
+                } else {
+                    currentResult = '-' + currentResult;
+                }
+                updateDisplay();
+            }
+        }
+
+        function calculate() {
+            if (calculationComplete) return;
+            
+            calculation += currentResult;
+            
+            try {
+                // Replace × with * for evaluation
+                let evalString = calculation.replace(/×/g, '*');
+                let result = eval(evalString);
+                
+                // Format result
+                if (result === undefined) {
+                    currentResult = 'Error';
+                } else {
+                    // Handle floating point precision
+                    if (Number.isInteger(result)) {
+                        currentResult = result.toString();
+                    } else {
+                        // Limit to 8 decimal places
+                        currentResult = parseFloat(result.toFixed(8)).toString();
+                    }
+                }
+            } catch (error) {
+                currentResult = 'Error';
+            }
+            
+            calculationComplete = true;
+            updateDisplay();
+            
+            // Add visual feedback for equals button
+            const equalsButton = document.getElementById('equals');
+            equalsButton.style.transform = 'translateY(4px)';
+            equalsButton.style.boxShadow = '0 0 0 #000, 0 1px 3px rgba(0, 0, 0, 0.3)';
+            
+            setTimeout(() => {
+                equalsButton.style.transform = '';
+                equalsButton.style.boxShadow = '';
+            }, 100);
+        }
+
+        function clearDisplay() {
+            calculation = '';
+            currentResult = '0';
+            calculationComplete = false;
+            updateDisplay();
+            
+            // Add calculator reset sound effect
+            playButtonSound(800);
+        }
+        
+        function playButtonSound(freq) {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.value = freq || 440;
+                gainNode.gain.value = 0.1;
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.start();
+                gainNode.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.15);
+                
+                setTimeout(() => {
+                    oscillator.stop();
+                }, 150);
+            } catch (e) {
+                console.log('Audio not supported');
+            }
+        }
+
+        function backspace() {
+            if (currentResult.length > 1) {
+                currentResult = currentResult.slice(0, -1);
+            } else {
+                currentResult = '0';
+            }
+            updateDisplay();
+        }
+
+        // Add button press effect to all buttons
+        document.querySelectorAll('.button').forEach(button => {
+            button.addEventListener('mousedown', function() {
+                this.style.transform = 'translateY(4px)';
+                this.style.boxShadow = '0 0 0 #000, 0 1px 3px rgba(0, 0, 0, 0.3)';
+            });
+            
+            button.addEventListener('mouseup', function() {
+                this.style.transform = '';
+                this.style.boxShadow = '';
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = '';
+                this.style.boxShadow = '';
+            });
+        });
+    </script>
+</body>
+</html>
